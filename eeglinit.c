@@ -19,8 +19,8 @@
    /* Boston, MA 02111-1307, USA.                                    */
 
 /*********************************************************************/
-/* This is a 64-bit version of eegl.c.                               */
-/* It is based on Version 1.1.0 of eegl.c                            */
+/* This is a 64-bit version of eeglinit.c.                           */
+/* It is based on Version 1.1.0 of eeglinit.c                        */
 /* at http://www.github.com/aquila62/eegl                            */
 /*********************************************************************/
 
