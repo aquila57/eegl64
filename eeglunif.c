@@ -30,8 +30,14 @@
 /* lfsr_table.pdf                                       */
 /********************************************************/
 
-/* this subroutine produces a uniform random number     */
-/* from zero to one                                     */
+/* This subroutine produces a uniform random number     */
+/* from zero to one.                                    */
+/* This routine should produce all positive results.    */
+/* A test for negative results has been removed, for    */
+/* efficiency reasons.  If negative results occur in    */
+/* the future, the test for negative results has to     */
+/* be added back in to the routine, as follows.         */
+/*    if (num < 0.0) num = -num;                        */
 
 #define MAXINT (4294967296.0)
 
@@ -40,9 +46,8 @@
 double eeglunif(eefmt *ee)
    {
    double num;             /* random number from 0 up to 2^32 */
-   double frac;            /* random number from 0-1     */
+   double frac;            /* random number from 0-1          */
    num  = (double) eegl(ee);
-   if (num < 0.0) num = -num;
    /* This uniform random number is the ratio between       */
    /* a random UINT and 2^32, such that                     */
    /* 0.0 <= frac < 1.0                                     */
