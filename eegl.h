@@ -73,6 +73,7 @@ typedef struct eeglstruct {
 eefmt *eeglinit(void);                 /* initialization routine */
 unsigned int eegl(eefmt *ee);          /* random bit generator */
 double eeglunif(eefmt *ee);            /* random number 0-1 */
+double eeglfrac(eefmt *ee);            /* random fraction 0-1 */
 int eeglint(eefmt *ee, int limit);     /* random integer 0-limit */
 unsigned int eeglpwr(eefmt *ee, int bits); /* random # 0-32 bits */
 int eeglbit(eefmt *ee);                /* random bit */

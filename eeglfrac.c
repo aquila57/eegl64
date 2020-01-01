@@ -1,4 +1,4 @@
-/* eeglunif.c - uniform random number generator 0-1 Version 2.0.0    */
+/* eeglfrac.c - random fraction generator, 0-1  Version 0.1.0        */
 /* Copyright (C) 2019 aquila57 at github.com                         */
 
 /* This program is free software; you can redistribute it and/or     */
@@ -19,8 +19,7 @@
    /* Boston, MA 02111-1307, USA.                                    */
 
 /*********************************************************************/
-/* This is a 64-bit version of eeglunif.c.                           */
-/* It is based on Version 1.0.0 of eeglunif.c                        */
+/* This is a new generator not included in                           */
 /* at http://www.github.com/aquila62/eegl                            */
 /*********************************************************************/
 
@@ -30,33 +29,28 @@
 /* lfsr_table.pdf                                       */
 /********************************************************/
 
-/* This subroutine produces a uniform random number     */
-/* from zero to one.                                    */
-/* Use this routine when duplicate keys in a binary     */
-/* tree is not an issue.  This routine produces         */
-/* duplicate keys roughly 0.1% of the time.             */
-/* For a uniform fraction with 53 bit resolution,       */
-/* use eeglfrac() instead of this subroutine.           */
-/* This routine runs faster than eeglfrac().            */
-/* This routine should produce all positive results.    */
-/* A test for negative results has been removed, for    */
-/* efficiency reasons.  If negative results occur in    */
-/* the future, the test for negative results has to     */
-/* be added back in to the routine, as follows.         */
-/*    if (num < 0.0) num = -num;                        */
+/* This subroutine produces a uniform random fraction     */
+/* from zero to one.                                      */
+/* The difference between this routine and eeglunif()     */
+/* is that this routine runs 53 times slower and has      */
+/* 53 bit resolution.  eeglunif() has 32 bit resolution.  */
+/* If duplicate keys in a binary tree are not an issue,   */
+/* eeglunif() may be adequate for your application.       */
 
-#define MAXINT (4294967296.0)
+#define BITS (53)
 
 #include "eegl.h"
 
-double eeglunif(eefmt *ee)
+double eeglfrac(eefmt *ee)
    {
-   double num;             /* random number from 0 up to 2^32 */
+   int i;
    double frac;            /* random number from 0-1          */
-   num  = (double) eegl(ee);
-   /* This uniform random number is the ratio between       */
-   /* a random UINT and 2^32, such that                     */
-   /* 0.0 <= frac < 1.0                                     */
-   frac = num / MAXINT;
+   frac = 0.0;
+   i = 53;
+   while (i--)
+      {
+      frac *= 0.5;
+      if (eeglpwr(ee,1)) frac += 0.5;
+      } /* for each bit in the mantissa */
    return(frac);           /* return uniform random number */
-   } /* eeglunif */
+   } /* eeglfrac */
