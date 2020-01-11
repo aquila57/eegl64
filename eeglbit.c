@@ -1,5 +1,5 @@
 /* eeglbit.c - random number generator Version 2.0.0                 */
-/* Copyright (C) 2019 aquila57 at github.com                         */
+/* Copyright (C) 2019-2020 aquila57 at github.com                    */
 
 /* This program is free software; you can redistribute it and/or     */
 /* modify it under the terms of the GNU General Public License as    */
@@ -28,6 +28,8 @@
 /* The LFSR in this generator comes from the following  */
 /* http://courses.cse.tamu.edu/walker/csce680/          */
 /* lfsr_table.pdf                                       */
+/* 64 bit LFSR is 64,63,61,60 with low order bit equal  */
+/* to 64                                                */
 /********************************************************/
 
 /* this subroutine generates a random bit                 */

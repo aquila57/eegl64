@@ -52,6 +52,12 @@ typedef struct eeglstruct {
    unsigned int lfsr;        /* low  order LFSR */
    unsigned int prev;        /* prev LFSR */
    unsigned int pprev;       /* prev prev LFSR */
+   unsigned int crctbl[256];      /* crc32 table */
+   unsigned int crc;         /* crc32 */
+   unsigned int fibo1;       /* fibonacci number 1 */
+   unsigned int fibo2;       /* fibonacci number 2 */
+   unsigned int fibo3;       /* fibonacci number 3 */
+   unsigned int seed;        /* initial seed */
    unsigned int *state;      /* state array */
    } eefmt;
 
@@ -62,18 +68,24 @@ typedef struct eeglstruct {
 
 #define LFSRLOWBIT (ee->lowbit = ee->major & 1)
 
-#define LFSRROLL (ee->lfsr0 = ee->major = \
+#define LFSRROLL (ee->major = ee->lfsr0 = \
 (ee->major >> 1) | (ee->out << 31))
 
-#define LFSRCARRY (ee->lfsr = ee->minor = \
+#define LFSRCARRY (ee->minor = ee->lfsr = \
 (ee->minor >> 1) | (ee->lowbit << 31))
 
 #define LFSR (LFSROUT,LFSRLOWBIT,LFSRROLL,LFSRCARRY)
 
+void eeglcrct(eefmt *ee);              /* initialize crc table   */
+unsigned int eeglcrc(eefmt *ee, unsigned char *str, int len);
+unsigned int eeglsd(eefmt *ee);        /* generate random seed   */
 eefmt *eeglinit(void);                 /* initialization routine */
+eefmt *eeglstrt(unsigned int seed);    /* regression initialization */
 unsigned int eegl(eefmt *ee);          /* random bit generator */
 double eeglunif(eefmt *ee);            /* random number 0-1 */
 double eeglfrac(eefmt *ee);            /* random fraction 0-1 */
 int eeglint(eefmt *ee, int limit);     /* random integer 0-limit */
 unsigned int eeglpwr(eefmt *ee, int bits); /* random # 0-32 bits */
 int eeglbit(eefmt *ee);                /* random bit */
+void eegldspl(eefmt *ee, int option);  /* display eegl state */
+void eeglabt(void);                    /* about eegl RNG */
