@@ -1,0 +1,43 @@
+Installing eegl:
+
+Be sure you have installed the GNU Scientific Library for
+validating chi square tests..
+
+sudo apt-get install libgsl0-dev
+
+Some of the programs use X Windows and Curses.
+
+Some of the test scripts use the dieharder package to run
+standard random number tests.  One script uses the R
+language to perform the Anderson-Darling test on normal
+data.
+
+Make shell scripts executable.
+
+chmod 755 *.sh
+
+Next compile the programs.
+
+./inst.sh
+
+To de-install eegl:
+
+./deinst.sh
+
+# Other platforms.
+
+The eegl64 random number generator may be installed under
+mingw on Microsoft Windows.  Use the eeglstrt.c subroutine
+to initialize the generator.  The parameter for eeglstrt.c
+is a 32 bit unsigned integer, like date and time.
+
+Microsoft Windows mingw does not include the GNU Scientific
+Library or X Windows.  It does include curses.
+
+To see how to test eegl, read TESTING.
+Some of these test programs use new curses, X Windows,
+and dieharder.
+
+To read about the eegl generator, read README.eegl.
+
+To see the original eegl website, go to https://aquila62.github.io 
