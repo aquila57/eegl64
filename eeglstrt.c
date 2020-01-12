@@ -85,10 +85,8 @@ eefmt *eeglstrt(unsigned int seed)
    /***************************************************/
    eeglcrct(ee);      /* initialize crc table */
    ee->seed = seed | 1;   /* initial seed = parm */
-   ee->seed *= EMM;
-   ee->seed *= EMM;
-   ee->seed *= EMM;
-   ee->seed *= EMM;
+   i = 256;    /* warm up ee->seed 256 times */
+   while (i--) ee->seed *= EMM;    /* warm up ee->seed */
    str[0] = (ee->seed >> 24) & 255;
    ee->seed *= EMM;
    str[1] = (ee->seed >> 24) & 255;
