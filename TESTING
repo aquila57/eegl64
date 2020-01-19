@@ -241,20 +241,22 @@ on a curses screen.  To quit press 'q'.
 
 ------------------------------------------------------
 
-Test eeglpwr() by running tstdots.
-This test requires X Windows.
+Test eeglpwr() by running eegldots.
+This test requires the X Windows package.
 
 sudo apt-get install libx11-dev
 
-./tstdots
+./eegldots
 
-The output from tstdots is a random bitmap pattern of pixels 
-on an X Windows screen, 512x512.  To quit press 'q'.
+The output from eegldots is a random pattern of dots on a
+512x512 pixel screen.  To quit press 'q'.
 
 ------------------------------------------------------
 
 Random Walk Test:  ranwlk
-This test requires X Windows.  See sudo apt-get above.
+This test requires the X Windows package.
+
+sudo apt-get install libx11-dev
 
 ./tstwlk.sh
 
@@ -301,7 +303,9 @@ A pairs with T, G pairs with C, etc.
 Random Powerball Simulation:  pwrball
 pwrball is a random lottery game based on real odds
 and real pay-outs.  The jackpot is $1 Billion.
-This test requires new curses.  See apt-get above.
+This test requires new curses.
+
+sudo apt-get install libncurses-dev
 
 ./pwrball
 
