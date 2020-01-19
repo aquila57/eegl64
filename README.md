@@ -57,11 +57,11 @@ initialization.
 
 * eeglinit - Initialize the eegl random number generator.
 This routine is based on date and time.  The generator output
-is unpredictable.  See eeglstrt for initialization with a seed
-parameter.
+is unpredictable.  See eeglstrt for initialization with 3 seed
+parameters.
 
 * eeglstrt - Initialize the eegl random number generator with
-a seed parameter.  The generator output is repeatable, and is
+3 seed parameters.  The generator output is repeatable, and is
 used for regression testing.  See eeglinit for initialization
 based on date and time.
 
@@ -101,7 +101,7 @@ Chmod the install and de-install scripts.  Run inst.sh to compile.
 
 You may also compile this repository under mingw in Windows.
 Instead of initializing eegl64 with eeglinit.c, it is easier
-to use eeglstrt.c with an initial seed as a parameter.  You
+to use eeglstrt.c with 3 initial seeds as parameters.  You
 may initialize that seed with date and time, to make your
 testing less predictable.  The XWindows programs in this
 repository will not run directly under Windows.

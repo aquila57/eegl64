@@ -181,8 +181,8 @@ There are no parameters.
 
 ./binom
 
-The output from binom is a chi square of 65536
-16-bit samples.  Number of degrees of freedom is 16.
+The output from binom is a chi square of 131072
+17-bit samples.  Number of degrees of freedom is 17.
 This test uses Pascal's Triangle for calculating
 expected probabilities.
 

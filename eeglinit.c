@@ -33,7 +33,8 @@
 /***********************************************************/
 /* This initialization routine is based on date/time/ticks */
 /* RNG is an acronym for random number generator           */
-/* To do regression testing, use eeglstrt(seed)            */
+/* To do regression testing, use                           */
+/* eeglstrt(seed1,seed2,seed3)                             */
 /* instead of this initialization routine.                 */ 
 /***********************************************************/
 
@@ -43,6 +44,17 @@
 #include <time.h>
 #include <sys/times.h>
 #include "eegl.h"
+
+#define TAUSONE (ee->s1 = (((ee->s1&0xfffffffe)<<12) \
+      ^(((ee->s1<<13)^ee->s1)>>19)))
+
+#define TAUSTWO (ee->s2 = (((ee->s2&0xfffffff8)<< 4) \
+      ^(((ee->s2<< 2)^ee->s2)>>25)))
+
+#define TAUSTRE (ee->s3 = (((ee->s3&0xfffffff0)<<17) \
+      ^(((ee->s3<< 3)^ee->s3)>>11)))
+
+#define TAUS (TAUSONE ^ TAUSTWO ^ TAUSTRE)
 
 #define STATES (16384)
 
@@ -100,7 +112,7 @@ eefmt *eeglinit(void)
    /***************************************************/
    /* Create an 8 byte random string to use for       */
    /* calculating a random crc32.                     */
-   /* Assign the crc32 to fibo1                       */
+   /* Assign the crc32 to s1                          */
    /***************************************************/
    ee->seed *= EMM;    /* warm up the seed */
    ee->seed *= EMM;    /* warm up the seed */
@@ -121,11 +133,11 @@ eefmt *eeglinit(void)
    str[6] = (ee->seed >> 24) & 255;
    ee->seed *= EMM;
    str[7] = (ee->seed >> 24) & 255;
-   ee->fibo1 = eeglcrc(ee,str,8);
+   ee->s1 = eeglcrc(ee,str,8);
    /***************************************************/
    /* Create an 8 byte random string to use for       */
    /* calculating a random crc32.                     */
-   /* Assign the crc32 to fibo2                       */
+   /* Assign the crc32 to s2                          */
    /***************************************************/
    ee->seed *= EMM;
    str[0] = (ee->seed >> 24) & 255;
@@ -143,15 +155,34 @@ eefmt *eeglinit(void)
    str[6] = (ee->seed >> 24) & 255;
    ee->seed *= EMM;
    str[7] = (ee->seed >> 24) & 255;
-   ee->fibo2 = eeglcrc(ee,str,8);
+   ee->s2 = eeglcrc(ee,str,8);
+   /***************************************************/
+   /* Create an 8 byte random string to use for       */
+   /* calculating a random crc32.                     */
+   /* Assign the crc32 to s3                          */
+   /***************************************************/
+   ee->seed *= EMM;
+   str[0] = (ee->seed >> 24) & 255;
+   ee->seed *= EMM;
+   str[1] = (ee->seed >> 24) & 255;
+   ee->seed *= EMM;
+   str[2] = (ee->seed >> 24) & 255;
+   ee->seed *= EMM;
+   str[3] = (ee->seed >> 24) & 255;
+   ee->seed *= EMM;
+   str[4] = (ee->seed >> 24) & 255;
+   ee->seed *= EMM;
+   str[5] = (ee->seed >> 24) & 255;
+   ee->seed *= EMM;
+   str[6] = (ee->seed >> 24) & 255;
+   ee->seed *= EMM;
+   str[7] = (ee->seed >> 24) & 255;
+   ee->s3 = eeglcrc(ee,str,8);
    /*****************************************************/
-   /* assign fibo3, we are now ready to assign          */
-   /* the entire eegl state                             */
-   /* eeglsd() creates a random 32 bit unsigned integer */
+   /* we are now ready to assign the entire eegl state  */
    /*****************************************************/
-   ee->fibo3 = ee->fibo1 + ee->fibo2;
-   ee->major = ee->lfsr0 = eeglsd(ee);
-   ee->minor = ee->lfsr  = eeglsd(ee);
+   ee->major = ee->lfsr0 = TAUS;     /* set to random UINT */
+   ee->minor = ee->lfsr  = TAUS;     /* set to random UINT */
 
    /***************************************************/
    /* initialize the state array to random values     */
@@ -160,20 +191,20 @@ eefmt *eeglinit(void)
    stq = (unsigned int *) ee->state + ee->states;
    while (stp < stq)
       {
-      *stp++ = eeglsd(ee);      /* set to random UINT */
+      *stp++ = TAUS;         /* set to random UINT */
       } /* for each element in ee->state */
 
    /***************************************************/
    /* initialize pprev to random values               */
    /* this field is backed up in eegl()               */
    /***************************************************/
-   ee->pprev = eeglsd(ee);      /* set to random UINT */
+   ee->pprev = TAUS;         /* set to random UINT */
 
    /***************************************************/
    /* initialize prev to random values                */
    /* this field is backed up in eegl()               */
    /***************************************************/
-   ee->prev = eeglsd(ee);       /* set to random UINT */
+   ee->prev = TAUS;         /* set to random UINT */
 
    /***************************************************/
    /* Warm up the generator                           */
@@ -189,3 +220,4 @@ eefmt *eeglinit(void)
    /***************************************************/
    return(ee);
    } /* eeglinit subroutine */
+

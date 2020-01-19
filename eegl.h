@@ -52,6 +52,9 @@ typedef struct eeglstruct {
    unsigned int lfsr;        /* low  order LFSR */
    unsigned int prev;        /* prev LFSR */
    unsigned int pprev;       /* prev prev LFSR */
+   unsigned int s1;          /* taus s1        */
+   unsigned int s2;          /* taus s2        */
+   unsigned int s3;          /* taus s3        */
    unsigned int crctbl[256];      /* crc32 table */
    unsigned int crc;         /* crc32 */
    unsigned int fibo1;       /* fibonacci number 1 */
@@ -80,7 +83,8 @@ void eeglcrct(eefmt *ee);              /* initialize crc table   */
 unsigned int eeglcrc(eefmt *ee, unsigned char *str, int len);
 unsigned int eeglsd(eefmt *ee);        /* generate random seed   */
 eefmt *eeglinit(void);                 /* initialization routine */
-eefmt *eeglstrt(unsigned int seed);    /* regression initialization */
+eefmt *eeglstrt(unsigned int seed1, unsigned int seed2,
+   unsigned int seed3);    /* regression initialization */
 unsigned int eegl(eefmt *ee);          /* random bit generator */
 double eeglunif(eefmt *ee);            /* random number 0-1 */
 double eeglfrac(eefmt *ee);            /* random fraction 0-1 */

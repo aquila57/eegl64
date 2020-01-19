@@ -43,16 +43,27 @@
 #include <sys/times.h>
 #include "eegl.h"
 
+#define TAUSONE (ee->s1 = (((ee->s1&0xfffffffe)<<12) \
+      ^(((ee->s1<<13)^ee->s1)>>19)))
+
+#define TAUSTWO (ee->s2 = (((ee->s2&0xfffffff8)<< 4) \
+      ^(((ee->s2<< 2)^ee->s2)>>25)))
+
+#define TAUSTRE (ee->s3 = (((ee->s3&0xfffffff0)<<17) \
+      ^(((ee->s3<< 3)^ee->s3)>>11)))
+
+#define TAUS (ee->seed = TAUSONE ^ TAUSTWO ^ TAUSTRE)
+
 #define STATES (16384)
 
 #define EMM (65539)
 
 void eeglcrct(eefmt *ee);
 
-eefmt *eeglstrt(unsigned int seed)
+eefmt *eeglstrt(unsigned int seed1, unsigned int seed2,
+   unsigned int seed3)
    {
    int i;
-   unsigned char str[16];      /* string to crc */
    unsigned int *stp,*stq;     /* pointers into state array */
    eefmt *ee;                  /* eegl structure */
 
@@ -84,45 +95,31 @@ eefmt *eeglstrt(unsigned int seed)
    /* initialize the first LFSR to input parameter    */
    /***************************************************/
    eeglcrct(ee);      /* initialize crc table */
-   ee->seed = seed | 1;   /* initial seed = parm */
-   i = 256;    /* warm up ee->seed 256 times */
-   while (i--) ee->seed *= EMM;    /* warm up ee->seed */
-   str[0] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[1] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[2] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[3] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[4] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[5] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[6] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[7] = (ee->seed >> 24) & 255;
-   ee->fibo1 = eeglcrc(ee,str,8);
-   ee->seed *= EMM;
-   str[0] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[1] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[2] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[3] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[4] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[5] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[6] = (ee->seed >> 24) & 255;
-   ee->seed *= EMM;
-   str[7] = (ee->seed >> 24) & 255;
-   ee->fibo2 = eeglcrc(ee,str,8);
-   ee->fibo3 = ee->fibo1 + ee->fibo2;
-   ee->major = ee->lfsr0 = eeglsd(ee);
-   ee->minor = ee->lfsr  = eeglsd(ee);
+   if (seed1 < 1 || seed1 > 4000000000)
+      {
+      fprintf(stderr,"eeglstrt: seed1 %u "
+         "is invalid\n", seed1);
+      exit(1);
+      } /* invalid seed 1 */
+   if (seed2 < 1 || seed2 > 4000000000)
+      {
+      fprintf(stderr,"eeglstrt: seed2 %u "
+         "is invalid\n", seed2);
+      exit(1);
+      } /* invalid seed 2 */
+   if (seed3 < 1 || seed3 > 4000000000)
+      {
+      fprintf(stderr,"eeglstrt: seed3 %u "
+         "is invalid\n", seed3);
+      exit(1);
+      } /* invalid seed 3 */
+   ee->s1 = seed1;    /* initial s1 = parm 1 */
+   ee->s2 = seed2;    /* initial s2 = parm 2 */
+   ee->s3 = seed3;    /* initial s3 = parm 3 */
+   i = 128;    /* warm up taus seeds 128 times */
+   while (i--) TAUS;    /* warm up ee->seed */
+   ee->major = ee->lfsr0 = TAUS;      /* set to random UINT */
+   ee->minor = ee->lfsr  = TAUS;      /* set to random UINT */
 
    /***************************************************/
    /* initialize the state array to random values     */
@@ -131,20 +128,20 @@ eefmt *eeglstrt(unsigned int seed)
    stq = (unsigned int *) ee->state + ee->states;
    while (stp < stq)
       {
-      *stp++ = eeglsd(ee);      /* set to random UINT */
+      *stp++ = TAUS;      /* set to random UINT */
       } /* for each element in ee->state */
 
    /***************************************************/
    /* initialize pprev to random values               */
    /* this field is backed up in eegl()               */
    /***************************************************/
-   ee->pprev = eeglsd(ee);      /* set to random UINT */
+   ee->pprev = TAUS;      /* set to random UINT */
 
    /***************************************************/
    /* initialize prev to random values                */
    /* this field is backed up in eegl()               */
    /***************************************************/
-   ee->prev = eeglsd(ee);       /* set to random UINT */
+   ee->prev = TAUS;      /* set to random UINT */
 
    /***************************************************/
    /* Warm up the generator                           */

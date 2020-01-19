@@ -23,6 +23,17 @@
 
 #include "eegl.h"
 
+#define TAUSONE (ee->s1 = (((ee->s1&0xfffffffe)<<12) \
+      ^(((ee->s1<<13)^ee->s1)>>19)))
+
+#define TAUSTWO (ee->s2 = (((ee->s2&0xfffffff8)<< 4) \
+      ^(((ee->s2<< 2)^ee->s2)>>25)))
+
+#define TAUSTRE (ee->s3 = (((ee->s3&0xfffffff0)<<17) \
+      ^(((ee->s3<< 3)^ee->s3)>>11)))
+
+#define TAUS (TAUSONE ^ TAUSTWO ^ TAUSTRE)
+
 /* multiplier for RANDU */
 
 #define EMM (65539)
@@ -31,7 +42,7 @@
 
 unsigned int eeglsd(eefmt *ee)
    {
-   int ch;
+   unsigned int ch;
    unsigned int rslt;
    unsigned char *p,*q;
    unsigned char str[256];
@@ -39,12 +50,8 @@ unsigned int eeglsd(eefmt *ee)
    q = (unsigned char *) str + LEN;
    while (p < q)
       {
-      ee->seed *= EMM;
-      ee->fibo1 = ee->fibo2;
-      ee->fibo2 = ee->fibo3;
-      ee->fibo3 = ee->fibo1 + ee->fibo2;
-      ch = (ee->seed >> 24) ^ (ee->fibo3 >> 24);
-      *p++ = ch;
+      ch = TAUS;
+      *p++ = (ch >> 24);
       } /* for each unsigned char in str */
    rslt = eeglcrc(ee, str, LEN);
    return(rslt);
