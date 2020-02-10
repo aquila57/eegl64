@@ -1,5 +1,6 @@
 #!/bin/bash
 make -f eegllib.mak clean
+make -f walklib.mak clean
 make -f binom.mak clean
 make -f captcha.mak clean
 make -f eeglchi.mak clean

@@ -1,5 +1,5 @@
-# ranwlk.mak Version 1.0.0 - Compile random walk
-# Copyright (C) 2016-2020 aquila57 at github.com
+# ranwlk.mak - Compile ranwlk.c  Version 0.1.0
+# Copyright (C) 2020  aquila57 at github.com
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,26 +14,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to:
 
-#     Free Software Foundation, Inc.
-#     59 Temple Place - Suite 330
-#     Boston, MA  02111-1307, USA.
-
-# See the eeglgen.c program for generating an input stream
-# Test with the tstwlk.sh script
+# 	Free Software Foundation, Inc.
+# 	59 Temple Place - Suite 330
+# 	Boston, MA  02111-1307, USA.
 
 OBJ=ranwlk.o
 
 CC=gcc
 
-CFLAGS=-c -Wall -O2
+CFLAGS=-c -Wall -O2 -I/usr/X11R6/include/X11
 
-LDFLAGS=-L/usr/lib/i386-linux-gnu -lX11 -lm
+LDFLAGS=-L. -lwalk -L/usr/X11R6/lib -lX11
 
-ranwlk:				$(OBJ)
-		$(CC) -Wall -O2 $(OBJ) -o ranwlk $(LDFLAGS)
+ranwlk:			$(OBJ) libwalk.a
+	$(CC) -Wall -O2 $(OBJ) -o ranwlk $(LDFLAGS)
 
-ranwlk.o:			ranwlk.c
-		$(CC) $(CFLAGS) ranwlk.c
+ranwlk.o:		ranwlk.c
+	$(CC) $(CFLAGS) ranwlk.c
 
 clean:
-		rm -f $(OBJ) ranwlk
+	rm -f ranwlk $(OBJ)
